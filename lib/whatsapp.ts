@@ -93,7 +93,7 @@ export async function sendCustomerLink(
   const base = process.env.APP_URL || "http://localhost:3000";
   const link = `${base}/c/${token}`;
   const body =
-    `Hello ${name}, this is MLV Enterprise regarding your Yale ${requestType} service request. ` +
+    `Hello ${name}, this is IT Service First (Yale Authorized Dealer) regarding your Yale ${requestType} service request. ` +
     `Please share a few details so we can schedule your visit:\n${link}`;
   try {
     await sendText(phone, body);

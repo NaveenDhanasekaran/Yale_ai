@@ -63,8 +63,8 @@ export function AdminShell({
             Y
           </div>
           <div>
-            <div className="text-sm font-bold leading-tight">MLV Enterprise</div>
-            <div className="text-xs text-slate-500">Yale Service</div>
+            <div className="text-sm font-bold leading-tight">IT Service First</div>
+            <div className="text-xs text-slate-500">Yale Authorized Dealer</div>
           </div>
         </div>
 

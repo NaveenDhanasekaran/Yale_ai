@@ -109,7 +109,7 @@ async function llmTurn(
   const stillNeeded = items.filter((i) => !state[i]);
 
   const system =
-    `You are the friendly WhatsApp assistant for MLV Enterprise, an authorised Yale smart-lock service dealer in Chennai. ` +
+    `You are the friendly WhatsApp assistant for IT Service First, an authorised Yale smart-lock service dealer in Chennai. ` +
     `You are chatting with the customer ${lead.customer_name} about their Yale ${rt} request. ` +
     `Collect these items conversationally, ONE at a time: ${items.join(", ")}. ` +
     `The customer sends photos directly here in WhatsApp — never give a link or mention any website/form. ` +
@@ -190,11 +190,11 @@ export async function startCustomerChat(
   const turn = await llmTurn(
     lead,
     docs,
-    "The conversation is just starting. Greet the customer warmly by name, say you're MLV Enterprise (Yale service), and ask for the first item."
+    "The conversation is just starting. Greet the customer warmly by name, say you're IT Service First (Yale Authorized Dealer), and ask for the first item."
   );
   const greeting =
     turn?.reply ??
-    `Hello ${lead.customer_name}! This is MLV Enterprise (Yale service). To schedule your ${lead.request_type}, please send a photo of your invoice.`;
+    `Hello ${lead.customer_name}! This is IT Service First (Yale Authorized Dealer). To schedule your ${lead.request_type}, please send a photo of your invoice.`;
   try {
     await sendText(lead.phone, greeting);
   } catch {

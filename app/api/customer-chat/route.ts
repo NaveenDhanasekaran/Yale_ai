@@ -33,7 +33,7 @@ export async function POST(req: Request) {
       : "a short description of the problem and photos/videos of the issue";
 
   const system =
-    `You are a warm, polite assistant for MLV Enterprise, an authorised Yale smart-lock service dealer in Chennai. ` +
+    `You are a warm, polite assistant for IT Service First, an authorised Yale smart-lock service dealer in Chennai. ` +
     `You are chatting with the customer ${name} about their Yale ${requestType} request. ` +
     `Help them and answer their questions in simple, friendly English. ` +
     `We need them to: upload ${need}, choose a preferred date and time, and (optionally) share their location — ` +

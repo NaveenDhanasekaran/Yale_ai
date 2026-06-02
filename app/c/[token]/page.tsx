@@ -49,7 +49,7 @@ export default async function CustomerPage({
         <Card>
           <h1 className="text-base font-semibold text-slate-800">Invalid link</h1>
           <p className="mt-1 text-sm text-slate-500">
-            This link isn’t valid. Please contact MLV Enterprise.
+            This link isn’t valid. Please contact IT Service First.
           </p>
         </Card>
       </Shell>
@@ -77,14 +77,14 @@ export default async function CustomerPage({
       <div className="mb-4">
         <h1 className="text-xl font-bold text-slate-900">Hi {lead.customer_name} 👋</h1>
         <p className="mt-1 text-sm text-slate-600">
-          This is <strong>MLV Enterprise</strong> regarding your Yale{" "}
+          This is <strong>IT Service First</strong> regarding your Yale{" "}
           <strong>{requestType}</strong> service request. Please share a few details below so
           we can schedule your visit.
         </p>
       </div>
       <ChatAssistant
         token={token}
-        greeting={`Hi ${lead.customer_name}! I'm the MLV Enterprise assistant. I'll help schedule your Yale ${requestType}. Please share the details using the form below, and pick a date — ask me anything!`}
+        greeting={`Hi ${lead.customer_name}! I'm the IT Service First assistant. I'll help schedule your Yale ${requestType}. Please share the details using the form below, and pick a date — ask me anything!`}
       />
 
       <Card>
