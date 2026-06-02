@@ -1,63 +1,54 @@
 import { getServiceClient } from "@/lib/supabase";
-import { addTechnician, setTechnicianStatus } from "@/app/actions";
+import { addTechnician } from "@/app/actions";
 import { AdminShell } from "@/app/AdminShell";
-import { TECH_STATUS_LABELS, type TechStatus, type Technician } from "@/lib/types";
-import { DeleteTechButton } from "./DeleteTechButton";
-import { CopyLinkButton } from "./CopyLinkButton";
+import type { Technician } from "@/lib/types";
+import { TechRow } from "./TechRow";
 
-type TechRow = Technician & { access_token: string | null };
-
-const STATUS_STYLES: Record<TechStatus, string> = {
-  available: "bg-green-100 text-green-800",
-  busy: "bg-orange-100 text-orange-800",
-  off: "bg-slate-200 text-slate-600",
-};
-
-const STATUSES: TechStatus[] = ["available", "busy", "off"];
+type TechRowData = Technician & { access_token: string | null };
 
 export default async function TechniciansPage() {
   const supabase = getServiceClient();
 
-  let technicians: TechRow[] = [];
+  let technicians: TechRowData[] = [];
   if (supabase) {
     const { data } = await supabase
       .from("technicians")
       .select("id, name, phone, status, access_token")
       .order("name");
-    technicians = (data ?? []) as unknown as TechRow[];
+    technicians = (data ?? []) as unknown as TechRowData[];
   }
 
   return (
     <AdminShell active="technicians" title="Technicians">
       <form
         action={addTechnician}
-        className="mb-6 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-end"
+        className="mb-6 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-end"
       >
         <div className="flex-1">
-          <label className="mb-1 block text-sm font-medium text-slate-700">Name</label>
+          <label className="mb-1.5 block text-sm font-medium text-slate-700">Name</label>
           <input
             name="name"
             required
             placeholder="Technician name"
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500"
           />
         </div>
         <div className="flex-1">
-          <label className="mb-1 block text-sm font-medium text-slate-700">Phone</label>
+          <label className="mb-1.5 block text-sm font-medium text-slate-700">Phone</label>
           <input
             name="phone"
             required
             placeholder="+91…"
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500"
           />
         </div>
-        <button className="rounded-lg bg-slate-900 px-5 py-2 text-sm font-medium text-white hover:bg-slate-700">
+        <button className="rounded-lg bg-slate-900 px-5 py-2 text-sm font-medium text-white hover:bg-slate-800">
           + Add Technician
         </button>
       </form>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-200 px-5 py-3">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-200 px-5 py-3.5">
           <h2 className="text-sm font-semibold text-slate-700">
             All Technicians ({technicians.length})
           </h2>
@@ -77,41 +68,12 @@ export default async function TechniciansPage() {
                   <th className="px-5 py-3">Status</th>
                   <th className="px-5 py-3">Set status</th>
                   <th className="px-5 py-3">Job link</th>
-                  <th className="px-5 py-3"></th>
+                  <th className="px-5 py-3">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {technicians.map((t) => (
-                  <tr key={t.id} className="hover:bg-slate-50/50">
-                    <td className="px-5 py-4 font-medium">{t.name}</td>
-                    <td className="px-5 py-4 text-slate-700">{t.phone}</td>
-                    <td className="px-5 py-4">
-                      <span
-                        className={`inline-block rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLES[t.status]}`}
-                      >
-                        {TECH_STATUS_LABELS[t.status]}
-                      </span>
-                    </td>
-                    <td className="px-5 py-4">
-                      <div className="flex gap-1">
-                        {STATUSES.filter((s) => s !== t.status).map((s) => (
-                          <form key={s} action={setTechnicianStatus}>
-                            <input type="hidden" name="id" value={t.id} />
-                            <input type="hidden" name="status" value={s} />
-                            <button className="rounded border border-slate-300 px-2 py-1 text-xs text-slate-600 hover:bg-slate-100">
-                              {TECH_STATUS_LABELS[s]}
-                            </button>
-                          </form>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="px-5 py-4">
-                      <CopyLinkButton token={t.access_token} />
-                    </td>
-                    <td className="px-5 py-4">
-                      <DeleteTechButton id={t.id} name={t.name} />
-                    </td>
-                  </tr>
+                  <TechRow key={t.id} tech={t} />
                 ))}
               </tbody>
             </table>

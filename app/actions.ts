@@ -213,6 +213,22 @@ export async function addTechnician(formData: FormData) {
   revalidatePath("/technicians");
 }
 
+/** Edit a technician's name and phone. */
+export async function updateTechnician(formData: FormData) {
+  const supabase = getServiceClient();
+  if (!supabase) throw new Error("Supabase is not configured.");
+
+  const id = String(formData.get("id") ?? "");
+  const name = String(formData.get("name") ?? "").trim();
+  const phone = String(formData.get("phone") ?? "").trim();
+  if (!id || !name || !phone) throw new Error("Name and phone are required.");
+
+  const { error } = await supabase.from("technicians").update({ name, phone }).eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/technicians");
+  revalidatePath("/");
+}
+
 /** Remove a technician. Their jobs/zones are set to unassigned (ON DELETE SET NULL). */
 export async function removeTechnician(formData: FormData) {
   const supabase = getServiceClient();
