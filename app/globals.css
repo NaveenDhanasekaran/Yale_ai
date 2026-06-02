@@ -1,48 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Claude-style theme tokens */
+@theme {
+  --color-background: #faf9f5;
+  --color-surface: #ffffff;
+  --color-foreground: #1a1a18;
+  --color-muted: #f2f0ea;
+  --color-muted-foreground: #73726c;
+  --color-border: #ebe9e2;
+  --color-primary: #141413;
+  --color-primary-foreground: #ffffff;
+  --color-accent: #d97757;
+  --color-accent-foreground: #ffffff;
+  --font-serif: "Source Serif 4", Georgia, serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: #faf9f5;
+  color: #1a1a18;
   font-family: "Inter", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* LazyRabbit-style helpers (used by the login / branded pages) */
+/* Plus Jakarta Sans — used on the branded login page */
 .font-display {
   font-family: "Plus Jakarta Sans", system-ui, sans-serif;
-}
-
-@keyframes floaty {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-.animate-floaty {
-  animation: floaty 5s ease-in-out infinite;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-fadeup {
-  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }

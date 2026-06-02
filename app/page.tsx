@@ -1,4 +1,14 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
+import {
+  Briefcase,
+  Inbox,
+  Clock,
+  CheckCircle2,
+  RefreshCw,
+  Mail,
+  Plus,
+} from "lucide-react";
 import { getServiceClient } from "@/lib/supabase";
 import { assignTechnician, setJobStatus } from "@/app/actions";
 import { pollEmailsNow } from "@/app/poll-actions";
@@ -13,7 +23,7 @@ import {
 } from "@/lib/types";
 
 const STATUS_STYLES: Record<JobStatus, string> = {
-  new: "bg-slate-100 text-slate-700",
+  new: "bg-muted text-muted-foreground",
   docs_pending: "bg-amber-100 text-amber-800",
   ready_to_assign: "bg-blue-100 text-blue-800",
   assigned_pending: "bg-purple-100 text-purple-800",
@@ -40,10 +50,10 @@ function fmt(dateStr: string) {
   });
 }
 
-const btnGhost =
-  "rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50";
+const btnOutline =
+  "inline-flex h-9 items-center gap-2 rounded-md border border-border bg-surface px-3.5 text-sm font-medium text-foreground transition-colors hover:bg-muted";
 const btnPrimary =
-  "rounded-lg bg-slate-900 px-3.5 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-800";
+  "inline-flex h-9 items-center gap-2 rounded-md bg-primary px-3.5 text-sm font-medium text-primary-foreground transition hover:opacity-90";
 
 export default async function DashboardPage({
   searchParams,
@@ -56,13 +66,18 @@ export default async function DashboardPage({
   const headerActions = (
     <>
       <form action={pollEmailsNow}>
-        <button className={btnGhost}>↻ Check Gmail</button>
+        <button className={btnOutline}>
+          <RefreshCw className="h-4 w-4" strokeWidth={2} />
+          Check Gmail
+        </button>
       </form>
-      <Link href="/leads/import" className={btnGhost}>
+      <Link href="/leads/import" className={btnOutline}>
+        <Mail className="h-4 w-4" strokeWidth={2} />
         Import Email
       </Link>
       <Link href="/leads/new" className={btnPrimary}>
-        + New Lead
+        <Plus className="h-4 w-4" strokeWidth={2} />
+        New Lead
       </Link>
     </>
   );
@@ -110,38 +125,41 @@ export default async function DashboardPage({
   return (
     <AdminShell active="dashboard" title="Dashboard" action={headerActions}>
       {sp.email === "ok" && (
-        <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm text-emerald-800">
-          ✅ Checked Gmail — created {sp.created ?? 0} new lead(s) from {sp.seen ?? 0} email(s).
+        <div className="mb-6 rounded-lg border border-border bg-surface px-4 py-2.5 text-sm text-foreground">
+          <span className="text-accent">✓</span> Checked Gmail — created {sp.created ?? 0} new lead(s)
+          from {sp.seen ?? 0} email(s).
         </div>
       )}
       {sp.email === "notconfigured" && (
-        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
+        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
           Gmail isn’t connected. Add <code>GMAIL_USER</code> and <code>GMAIL_APP_PASSWORD</code>.
         </div>
       )}
 
+      {/* Stats */}
       <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <Stat label="Total Jobs" value={jobs.length} tone="slate" icon={iconBriefcase} />
-        <Stat label="Unassigned" value={unassigned} tone="blue" icon={iconInbox} />
-        <Stat label="In Progress" value={inProgress} tone="amber" icon={iconClock} />
-        <Stat label="Completed" value={completed} tone="emerald" icon={iconCheck} />
+        <Stat label="Total Jobs" value={jobs.length} icon={<Briefcase className="h-4 w-4 text-muted-foreground" strokeWidth={2} />} />
+        <Stat label="Unassigned" value={unassigned} icon={<Inbox className="h-4 w-4 text-muted-foreground" strokeWidth={2} />} />
+        <Stat label="In Progress" value={inProgress} icon={<Clock className="h-4 w-4 text-muted-foreground" strokeWidth={2} />} />
+        <Stat label="Completed" value={completed} icon={<CheckCircle2 className="h-4 w-4 text-muted-foreground" strokeWidth={2} />} />
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-3.5">
-          <h2 className="text-sm font-semibold text-slate-700">All Jobs</h2>
-          <span className="text-xs text-slate-400">{jobs.length} total</span>
+      {/* Jobs */}
+      <div className="overflow-hidden rounded-lg border border-border bg-surface">
+        <div className="flex items-center justify-between border-b border-border px-5 py-3.5">
+          <h2 className="font-serif text-lg">All Jobs</h2>
+          <span className="text-xs text-muted-foreground">{jobs.length} total</span>
         </div>
 
         {jobs.length === 0 ? (
-          <div className="px-5 py-16 text-center text-slate-500">
+          <div className="px-5 py-16 text-center text-sm text-muted-foreground">
             No jobs yet. New Yale emails arrive automatically, or click{" "}
-            <span className="font-medium">“+ New Lead”</span>.
+            <span className="font-medium text-foreground">“New Lead”</span>.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
+              <thead className="border-b border-border text-left text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 <tr>
                   <th className="px-5 py-3">Customer</th>
                   <th className="px-5 py-3">Type</th>
@@ -151,7 +169,7 @@ export default async function DashboardPage({
                   <th className="px-5 py-3">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-border">
                 {jobs.map((job) => {
                   const next = NEXT_STATUS[job.status];
                   const isOpen = !["completed", "cancelled"].includes(job.status);
@@ -163,13 +181,13 @@ export default async function DashboardPage({
                       ? suggestedZone.technician
                       : null;
                   return (
-                    <tr key={job.id} className="align-top hover:bg-slate-50/60">
+                    <tr key={job.id} className="align-top transition-colors hover:bg-muted/40">
                       <td className="px-5 py-4">
-                        <div className="font-medium text-slate-900">
+                        <div className="font-medium text-foreground">
                           {job.lead?.customer_name ?? "—"}
                         </div>
-                        <div className="text-xs text-slate-500">{job.lead?.phone}</div>
-                        <div className="text-xs text-slate-400">{fmt(job.created_at)}</div>
+                        <div className="text-xs text-muted-foreground">{job.lead?.phone}</div>
+                        <div className="text-xs text-muted-foreground/70">{fmt(job.created_at)}</div>
                         <div className="mt-1.5">
                           <CopyLink
                             token={job.lead?.customer_token ?? null}
@@ -178,20 +196,20 @@ export default async function DashboardPage({
                           />
                         </div>
                       </td>
-                      <td className="px-5 py-4 capitalize text-slate-700">
+                      <td className="px-5 py-4 capitalize text-muted-foreground">
                         {job.lead?.request_type}
                       </td>
-                      <td className="px-5 py-4 text-slate-700">{job.lead?.area ?? "—"}</td>
+                      <td className="px-5 py-4 text-muted-foreground">{job.lead?.area ?? "—"}</td>
                       <td className="px-5 py-4">
                         <span
-                          className={`inline-block rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLES[job.status]}`}
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLES[job.status]}`}
                         >
                           {STATUS_LABELS[job.status]}
                         </span>
                       </td>
-                      <td className="px-5 py-4 text-slate-700">
+                      <td className="px-5 py-4 text-foreground">
                         {job.technician?.name ?? (
-                          <span className="text-slate-400">Unassigned</span>
+                          <span className="text-muted-foreground">Unassigned</span>
                         )}
                       </td>
                       <td className="px-5 py-4">
@@ -202,7 +220,7 @@ export default async function DashboardPage({
                               <select
                                 name="technician_id"
                                 defaultValue={suggestedTech?.id ?? ""}
-                                className="rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs text-slate-700 focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500"
+                                className="h-8 rounded-md border border-border bg-surface px-2.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
                               >
                                 <option value="" disabled>
                                   Select technician…
@@ -213,12 +231,12 @@ export default async function DashboardPage({
                                   </option>
                                 ))}
                               </select>
-                              <button className="rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-500">
+                              <button className="h-8 rounded-md bg-accent px-3 text-xs font-medium text-accent-foreground transition hover:opacity-90">
                                 Assign
                               </button>
                             </form>
                           ) : (
-                            <span className="text-xs text-slate-400">No technicians</span>
+                            <span className="text-xs text-muted-foreground">No technicians</span>
                           )
                         ) : (
                           <div className="flex items-center gap-2">
@@ -226,7 +244,7 @@ export default async function DashboardPage({
                               <form action={setJobStatus}>
                                 <input type="hidden" name="job_id" value={job.id} />
                                 <input type="hidden" name="status" value={next} />
-                                <button className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-500">
+                                <button className="h-8 rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground transition hover:opacity-90">
                                   → {STATUS_LABELS[next]}
                                 </button>
                               </form>
@@ -235,7 +253,7 @@ export default async function DashboardPage({
                               <form action={setJobStatus}>
                                 <input type="hidden" name="job_id" value={job.id} />
                                 <input type="hidden" name="status" value="cancelled" />
-                                <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-500 hover:bg-red-50 hover:text-red-600">
+                                <button className="h-8 rounded-md border border-border px-3 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
                                   Cancel
                                 </button>
                               </form>
@@ -255,66 +273,21 @@ export default async function DashboardPage({
   );
 }
 
-const iconBriefcase = (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="7" width="20" height="14" rx="2" />
-    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-  </svg>
-);
-const iconInbox = (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 12h-6l-2 3h-4l-2-3H2" />
-    <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
-  </svg>
-);
-const iconClock = (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10" />
-    <path d="M12 6v6l4 2" />
-  </svg>
-);
-const iconCheck = (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-    <path d="m9 11 3 3L22 4" />
-  </svg>
-);
-
-const TONES: Record<string, { bg: string; fg: string; num: string }> = {
-  slate: { bg: "bg-slate-100", fg: "text-slate-600", num: "text-slate-900" },
-  blue: { bg: "bg-blue-100", fg: "text-blue-600", num: "text-blue-600" },
-  amber: { bg: "bg-amber-100", fg: "text-amber-600", num: "text-amber-600" },
-  emerald: { bg: "bg-emerald-100", fg: "text-emerald-600", num: "text-emerald-600" },
-};
-
-function Stat({
-  label,
-  value,
-  tone,
-  icon,
-}: {
-  label: string;
-  value: number;
-  tone: string;
-  icon: React.ReactNode;
-}) {
-  const t = TONES[tone];
+function Stat({ label, value, icon }: { label: string; value: number; icon: ReactNode }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md">
+    <div className="rounded-lg border border-border bg-surface p-5 transition-colors hover:border-accent/40">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</span>
-        <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${t.bg} ${t.fg}`}>
-          {icon}
-        </span>
+        <span className="text-sm text-muted-foreground">{label}</span>
+        {icon}
       </div>
-      <div className={`font-display mt-3 text-3xl font-bold ${t.num}`}>{value}</div>
+      <div className="mt-3 font-serif text-3xl text-foreground">{value}</div>
     </div>
   );
 }
 
 function SetupNotice({ reason, detail }: { reason: "env" | "schema"; detail?: string }) {
   return (
-    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6">
+    <div className="rounded-lg border border-amber-200 bg-amber-50 p-6">
       <h2 className="text-base font-semibold text-amber-900">⚙️ Finish setup</h2>
       {reason === "env" ? (
         <p className="mt-2 text-sm text-amber-800">
